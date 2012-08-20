@@ -18,11 +18,12 @@
 #  This notice shall supercede any other notices contained within the software.
 # =============================================================================
 
-"""The command line interface to ketipo. Run using script in root folder."""
+"""The command line interface to katipo. Run using script in root folder."""
+
 
 def main():
 	"""First function called when invoked from the command line."""
 	print 'Hello'
 
-if __name__=='__main__':
+if __name__ == '__main__':
 	main()

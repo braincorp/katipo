@@ -34,16 +34,16 @@ class KetapoRoot(object):
 		else:
 			assert(assemblyfile is not None)
 			self._clone(folder, giturl, assemblyfile)
-		
+
 	def _find_ketapo_root(self, folder):
 		"""Load in a ketapo setup."""
-		
+		raise NotImplementedError()
+
 	def _clone(self, folder, assembly_giturl, assemblyfile):
 		"""Initial a ketapo setup in folder from assemblyfile in
 		assembly_giturl."""
 		self._ketapo_root = os.path.join(folder, '.ketapo')
 		self._workingcopy_root = os.path.abspath(folder)
 		os.mkdir(self._ketapo_root)
-		self._assembly_repo = git.Repo.clone_from(assembly_giturl, 
+		self._assembly_repo = git.Repo.clone_from(assembly_giturl,
 								os.path.join(self._ketapo_root, 'assembly'))
-
