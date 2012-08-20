@@ -1,0 +1,18 @@
+# Test functionality
+pep8==1.3.3
+pytest==2.2.4
+pytest-cache==0.9
+pytest-capturelog==0.7
+pytest-cov==1.6
+pytest-pep8==1.0.2
+pytest-xdist==1.8
+
+# Documentation generator
+Jinja2==2.6
+Pygments==1.5
+docutils==0.9.1
+Sphinx==1.1.2
+
+# Readline must be installed before ipython
+ipython==0.13
+

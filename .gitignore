@@ -1,0 +1,6 @@
+.project
+.pydevproject
+.env
+.cache
+*.pyc
+
