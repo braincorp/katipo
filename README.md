@@ -41,10 +41,11 @@ list of repos.
 The look like:
 
     {
-    'repos': 
-    [{giturl : "git@github.com/braincorp/test.git",
-            path:"test",
-            test=true]
+    "repos": [
+        {"giturl" : "git@github.com/braincorp/test.git",
+            "path":"test",
+            "test"=true
+    ]
     }
     
 
