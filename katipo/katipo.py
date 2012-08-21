@@ -20,6 +20,17 @@
 
 import os
 import git
+import logging
+import json
+
+
+class Assembly(object):
+	"""Class for dealing with assembly files.
+
+	Initialize with a JSON description of an assembly file."""
+	def __init__(self, description):
+		self.repos = description.repos
+		logging.info('Assembly object with repos %s' % json.dumps(repos, indent=4))
 
 
 class KetapoRoot(object):
@@ -47,3 +58,5 @@ class KetapoRoot(object):
 		os.mkdir(self._ketapo_root)
 		self._assembly_repo = git.Repo.clone_from(assembly_giturl,
 								os.path.join(self._ketapo_root, 'assembly'))
+		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
+								self._ketapo_root, 'assembly', assembyfile)))))

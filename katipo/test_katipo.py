@@ -34,7 +34,7 @@ def create_repo_with_file(repo_path, filename, content):
 	containing content."""
 	repo = git.Repo.init(repo_path, True)
 	full_filename = os.path.join(repo.working_dir, filename)
-	with open(full_filename) as f:
+	with open(full_filename, 'w') as f:
 		f.write(content)
 	repo.git.add(full_filename)
 	repo.git.commit(m='"add file"')
@@ -68,12 +68,19 @@ class TestKetapoRootBasics(unittest.TestCase):
 	@classmethod
 	def create_test_repos(cls):
 		"""Create two repos - test and notest for the assembly file to point to."""
-		pass
+		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'test'),
+							filename='test.sh',
+							content='#!/bin/sh\necho Testing\n')
+		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'notest'),
+							filename='notest', content='Hello')
 
 	def test_clone(self):
 		k = ketapo.KetapoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
 				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
 				assemblyfile=os.path.join(self.tempfolder, 'test.ketapo'))
+		# Check that the two repos in the assembly were created properly
+		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test.sh'))
+		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))
 
 	@classmethod
 	def tearDownClass(self):
