@@ -40,9 +40,13 @@ list of repos.
 
 The look like:
 
-    repos=[{giturl : "git@github.com/braincorp/test.git",
+    {
+    'repos': 
+    [{giturl : "git@github.com/braincorp/test.git",
             path:"test",
             test=true]
+    }
+    
 
 `path` is optional and indicates the location where this repo will be located in the 
 working copy.
