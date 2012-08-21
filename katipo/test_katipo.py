@@ -26,7 +26,7 @@ import tempfile
 import logging
 import os
 import shutil
-import ketapo
+import katipo
 
 
 def create_repo_with_file(repo_path, filename, content):
@@ -40,11 +40,11 @@ def create_repo_with_file(repo_path, filename, content):
 	repo.git.commit(m='"add file"')
 
 
-class TestKetapoRootBasics(unittest.TestCase):
+class TestKatipoRootBasics(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		"""Create a fake assemblyfile and other repos for testing."""
-		cls.tempfolder = tempfile.mkdtemp(prefix='tmp-ketapo-test')
+		cls.tempfolder = tempfile.mkdtemp(prefix='tmp-katipo-test')
 		logging.info('Creating temporary git setup in %s' % cls.tempfolder)
 		os.mkdir(os.path.join(cls.tempfolder, 'workingcopy'))
 		os.mkdir(os.path.join(cls.tempfolder, 'gitrepos'))
@@ -58,10 +58,10 @@ class TestKetapoRootBasics(unittest.TestCase):
 		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'assemblies'),
 							filename='testassembly.katipo',
 							content="""
-			repos=[
-				{giturl : "%s", path : "test", test=true}
-				{giturl : "%s", path : "notest", test=false}
-			]
+			{"repos":[
+				{"giturl" : "%s", "path" : "test", "test" :true},
+				{"giturl" : "%s", "path" : "notest", "test" : false}
+			]}
 			""" % (os.path.join(cls.tempfolder, 'gitrepos', 'test'),
 					os.path.join(cls.tempfolder, 'gitrepos', 'notest')))
 
@@ -75,9 +75,9 @@ class TestKetapoRootBasics(unittest.TestCase):
 							filename='notest', content='Hello')
 
 	def test_clone(self):
-		k = ketapo.KetapoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+		k = katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
 				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
-				assemblyfile=os.path.join(self.tempfolder, 'test.ketapo'))
+				assemblyfile='testassembly.katipo')
 		# Check that the two repos in the assembly were created properly
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test.sh'))
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))

@@ -29,34 +29,43 @@ class Assembly(object):
 
 	Initialize with a JSON description of an assembly file."""
 	def __init__(self, description):
-		self.repos = description.repos
-		logging.info('Assembly object with repos %s' % json.dumps(repos, indent=4))
+		self.repos = description['repos']
+		logging.info('Assembly object with repos %s' % json.dumps(
+												description, indent=4))
 
 
-class KetapoRoot(object):
-	"""Class for interacting with a Ketapo repo. It must either be passed
+class KatipoRoot(object):
+	"""Class for interacting with a Katipo repo. It must either be passed
 	a folder from which to search for a ketapo root or a giturl and assembly
 	file."""
 	def __init__(self, folder=None, giturl=None, assemblyfile=None):
 		assert(folder is not None)
 		if giturl is None:
+			logging.info('Creating katipo from prexisting root')
 			assert(assemblyfile is None)
 			self._find_ketapo_root(folder)
 		else:
+			logging.info('Clone new katipo root')
 			assert(assemblyfile is not None)
 			self._clone(folder, giturl, assemblyfile)
 
 	def _find_ketapo_root(self, folder):
-		"""Load in a ketapo setup."""
+		"""Load in a katipo setup."""
 		raise NotImplementedError()
 
 	def _clone(self, folder, assembly_giturl, assemblyfile):
-		"""Initial a ketapo setup in folder from assemblyfile in
+		"""Initial a katipo setup in folder from assemblyfile in
 		assembly_giturl."""
-		self._ketapo_root = os.path.join(folder, '.ketapo')
+		logging.info('Cloning into %s from %s:/%s' %
+					(folder, assembly_giturl, assemblyfile))
+		self._katipo_root = os.path.join(folder, '.katipo')
 		self._workingcopy_root = os.path.abspath(folder)
-		os.mkdir(self._ketapo_root)
+		os.mkdir(self._katipo_root)
 		self._assembly_repo = git.Repo.clone_from(assembly_giturl,
-								os.path.join(self._ketapo_root, 'assembly'))
+								os.path.join(self._katipo_root, 'assembly'))
 		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
-								self._ketapo_root, 'assembly', assembyfile)))))
+								self._katipo_root, 'assembly', assemblyfile)))))
+		for repo in self.assembly.repos:
+			# Clone each repo
+			git.Repo.clone_from(repo['giturl'], os.path.join(self._workingcopy_root,
+														repo['path']))

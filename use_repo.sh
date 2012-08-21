@@ -18,7 +18,10 @@ fi
 
 source .env/bin/activate
 # readline must be come before everything else
-easy_install -q readline==6.2.2  
+# only need on Mac
+if [[ `uname` == 'Darwin' ]]; then
+   easy_install -q readline==6.2.2
+fi
 pip install -r requirements.txt -q
 pip install -r dev-requirements.txt -q
 
