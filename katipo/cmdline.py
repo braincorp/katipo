@@ -24,7 +24,7 @@ import sys
 import argparse
 import logging
 import abc
-
+import webbrowser
 
 def register_cmd(future_class_name, future_class_parents, future_class_attr):
 		print future_class_name
@@ -67,7 +67,8 @@ class Command_about(Command):
 		pass
 
 	def exec_cmd(self, args):
-		print 'about'
+		webbrowser.open_new('https://www.google.com/search?q=katipo')
+		webbrowser.open('https://github.com/braincorp/katipo')
 
 
 def build_arg_parser():
@@ -87,7 +88,7 @@ def run_args(args):
 	logging.info('Args %s' % str(args))
 	parser = build_arg_parser()
 	input = parser.parse_args(args)
-
+	input.cmd.exec_cmd(input)
 
 def main():
 	"""First function called when invoked from the command line."""
