@@ -41,6 +41,7 @@ list of repos.
 The look like:
 
     {
+    "katipo_schema" : 1
     "repos": [
         {"giturl" : "git@github.com/braincorp/test.git",
             "path":"test",
