@@ -24,11 +24,20 @@ import logging
 import json
 
 
+class KatipoException(Exception):
+	pass
+
+
 class Assembly(object):
 	"""Class for dealing with assembly files.
 
 	Initialize with a JSON description of an assembly file."""
 	def __init__(self, description):
+		self.description = description
+		if self.description['katipo_schema'] != 1:
+			# Only recognise one schema at the moment
+			raise KatipoException('Unknown katipo schema %s' %
+								str(self.description['schema']))
 		self.repos = description['repos']
 		logging.info('Assembly object with repos %s' % json.dumps(
 												description, indent=4))

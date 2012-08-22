@@ -48,3 +48,22 @@ class TestKatipoRootBasics(TestWithRepoSetup):
 		# Check that the two repos in the assembly were created properly
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test'))
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))
+
+
+class TestKatipoSchemeVersion(TestWithRepoSetup):
+	"""Check that the schema is checked and an Exception is raised if scheme
+	is unknown (positive test case is implicit since it is need for other tests
+	to pass."""
+	test_repo_description = {
+				'katipo_schema': 2,
+				'repos': [
+				{'path': "test", 'test': True,
+					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
+										'exec': True}}}]}
+
+	def test_schema_check(self):
+		def _run():
+			katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
+				assemblyfile='testassembly.katipo')
+		self.assertRaises(Exception, _run)
