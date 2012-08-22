@@ -27,61 +27,24 @@ import logging
 import os
 import shutil
 import katipo
+from test_reposetup import TestWithRepoSetup
 
 
-def create_repo_with_file(repo_path, filename, content):
-	"""Create a git repo at repo_path containing a file named filename
-	containing content."""
-	repo = git.Repo.init(repo_path, True)
-	full_filename = os.path.join(repo.working_dir, filename)
-	with open(full_filename, 'w') as f:
-		f.write(content)
-	repo.git.add(full_filename)
-	repo.git.commit(m='"add file"')
-
-
-class TestKatipoRootBasics(unittest.TestCase):
-	@classmethod
-	def setUpClass(cls):
-		"""Create a fake assemblyfile and other repos for testing."""
-		cls.tempfolder = tempfile.mkdtemp(prefix='tmp-katipo-test')
-		logging.info('Creating temporary git setup in %s' % cls.tempfolder)
-		os.mkdir(os.path.join(cls.tempfolder, 'workingcopy'))
-		os.mkdir(os.path.join(cls.tempfolder, 'gitrepos'))
-
-		cls.setup_assembly_file()
-		cls.create_test_repos()
-
-	@classmethod
-	def setup_assembly_file(cls):
-		"""Create an assembly file and repo to hold it."""
-		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'assemblies'),
-							filename='testassembly.katipo',
-							content="""
-			{"repos":[
-				{"giturl" : "%s", "path" : "test", "test" :true},
-				{"giturl" : "%s", "path" : "notest", "test" : false}
-			]}
-			""" % (os.path.join(cls.tempfolder, 'gitrepos', 'test'),
-					os.path.join(cls.tempfolder, 'gitrepos', 'notest')))
-
-	@classmethod
-	def create_test_repos(cls):
-		"""Create two repos - test and notest for the assembly file to point to."""
-		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'test'),
-							filename='test.sh',
-							content='#!/bin/sh\necho Testing\n')
-		create_repo_with_file(os.path.join(cls.tempfolder, 'gitrepos', 'notest'),
-							filename='notest', content='Hello')
+class TestKatipoRootBasics(TestWithRepoSetup):
+	test_repo_description = {
+				'katipo_schema': 1,
+				'repos': [
+				{'path': "test", 'test': True,
+					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
+										'exec': True}}},
+				{'path': 'notest', 'test': False,
+					'files': {'notest': {'content': 'Hello\n'}}}
+				]}
 
 	def test_clone(self):
 		k = katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
 				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
 				assemblyfile='testassembly.katipo')
 		# Check that the two repos in the assembly were created properly
-		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test.sh'))
+		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test'))
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))
-
-	@classmethod
-	def tearDownClass(self):
-		shutil.rmtree(self.tempfolder)
