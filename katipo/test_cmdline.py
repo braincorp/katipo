@@ -20,8 +20,25 @@
 import unittest
 
 import cmdline
+from test_reposetup import TestWithRepoSetup
+import os
 
 
-class TestCmdLine(unittest.TestCase):
-	def test_about(self):
-		cmdline.run_args(['about'])
+class TestClone(TestWithRepoSetup):
+	test_repo_description = {
+				'katipo_schema': 1,
+				'repos': [
+				{'path': "test", 'test': True,
+					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
+										'exec': True}}},
+				{'path': 'notest', 'test': False,
+					'files': {'notest': {'content': 'Hello\n'}}}
+				]}
+
+	def test_clone(self):
+		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
+						'assemblies'), 'testassembly.katipo'], working_dir=
+						os.path.join(self.tempfolder, 'workingcopy'))
+		# Check that the two repos in the assembly were created properly
+		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test'))
+		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))

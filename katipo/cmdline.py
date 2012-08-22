@@ -24,11 +24,8 @@ import sys
 import argparse
 import logging
 import abc
+import os
 import webbrowser
-
-def register_cmd(future_class_name, future_class_parents, future_class_attr):
-		print future_class_name
-		return type(future_class_name, future_class_parents, future_class_attr)
 
 
 class Command(object):
@@ -83,16 +80,20 @@ def build_arg_parser():
 	return toplevel_parser
 
 
-def run_args(args):
+def run_args(args, working_dir=None):
 	"""Execute the arguments passed."""
-	logging.info('Args %s' % str(args))
+	if working_dir is None:
+		working_dir = os.getcwd()
+	logging.info('Args %s is working dir %s' % (str(args), working_dir))
 	parser = build_arg_parser()
 	input = parser.parse_args(args)
 	input.cmd.exec_cmd(input)
 
+
 def main():
 	"""First function called when invoked from the command line."""
 	run_args(sys.argv[1:])
+
 
 if __name__ == '__main__':
 	main()

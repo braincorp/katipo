@@ -49,6 +49,19 @@ class TestKatipoRootBasics(TestWithRepoSetup):
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test'))
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))
 
+	def test_overclone(self):
+		"""Check that trying to clone on top of an existing katipo setup throws an
+		Exception."""
+		k = katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
+				assemblyfile='testassembly.katipo')
+
+		def _run():
+			katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
+				assemblyfile='testassembly.katipo')
+		self.assertRaises(Exception, _run)
+
 
 class TestKatipoSchemeVersion(TestWithRepoSetup):
 	"""Check that the schema is checked and an Exception is raised if scheme
