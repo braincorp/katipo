@@ -26,6 +26,7 @@ import logging
 import abc
 import os
 import webbrowser
+import katipo
 
 
 class Command(object):
@@ -34,7 +35,7 @@ class Command(object):
 		pass
 
 	@abc.abstractmethod
-	def exec_cmd(self, args):
+	def exec_cmd(self, args, working_dir):
 		pass
 
 	@property
@@ -54,8 +55,9 @@ class Command_clone(Command):
 		parser.add_argument('assemblyrepo', type=str)
 		parser.add_argument('assemblyfile', type=str)
 
-	def exec_cmd(self, args):
-		print 'clone %s' % str(args)
+	def exec_cmd(self, args, working_dir):
+		katipo.KatipoRoot(folder=working_dir,
+				giturl=args.assemblyrepo, assemblyfile=args.assemblyfile)
 
 
 class Command_about(Command):
@@ -63,7 +65,7 @@ class Command_about(Command):
 	def construct_parser(self, parser):
 		pass
 
-	def exec_cmd(self, args):
+	def exec_cmd(self, args, working_dir):
 		webbrowser.open_new('https://www.google.com/search?q=katipo')
 		webbrowser.open('https://github.com/braincorp/katipo')
 
@@ -87,7 +89,7 @@ def run_args(args, working_dir=None):
 	logging.info('Args %s is working dir %s' % (str(args), working_dir))
 	parser = build_arg_parser()
 	input = parser.parse_args(args)
-	input.cmd.exec_cmd(input)
+	input.cmd.exec_cmd(input, working_dir)
 
 
 def main():
