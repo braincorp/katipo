@@ -22,6 +22,8 @@ import os
 import git
 import logging
 import json
+import sys
+import shutil
 
 
 class KatipoException(Exception):
@@ -56,7 +58,17 @@ class KatipoRoot(object):
 		else:
 			logging.info('Clone new katipo root')
 			assert(assemblyfile is not None)
-			self._clone(folder, giturl, assemblyfile)
+			try:
+				self._clone(folder, giturl, assemblyfile)
+			except:
+				exc_info = sys.exc_info()
+				try:
+					logging.warning('Removing incomplete katipo root %s'
+							% self._katipo_root)
+					shutil.rmtree(self._katipo_root)
+				except:
+					pass
+				raise exc_info[1], None, exc_info[2]
 
 	def _find_ketapo_root(self, folder):
 		"""Load in a katipo setup."""
@@ -67,9 +79,7 @@ class KatipoRoot(object):
 		assembly_giturl."""
 		logging.info('Cloning into %s from %s:/%s' %
 					(folder, assembly_giturl, assemblyfile))
-		self._katipo_root = os.path.join(folder, '.katipo')
-		self._workingcopy_root = os.path.abspath(folder)
-		os.mkdir(self._katipo_root)
+		self._create_katipo_root_folder(folder)
 		self._assembly_repo = git.Repo.clone_from(assembly_giturl,
 								os.path.join(self._katipo_root, 'assembly'))
 		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
@@ -78,3 +88,14 @@ class KatipoRoot(object):
 			# Clone each repo
 			git.Repo.clone_from(repo['giturl'], os.path.join(self._workingcopy_root,
 														repo['path']))
+
+	def _create_katipo_root_folder(self, folder):
+		"""Create a .katipo root folder."""
+		# The reason for not placing .katipo_root in self immediately
+		# is that if anything fails during clone we rm katipo_root
+		# (since its probably in a messed up state).
+		# We only want to do that if we created the folder.
+		katipo_root = os.path.join(folder, '.katipo')
+		os.mkdir(os.path.join(katipo_root))
+		self._katipo_root = katipo_root
+		self._workingcopy_root = os.path.abspath(folder)

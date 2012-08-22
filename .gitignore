@@ -3,4 +3,6 @@
 .env
 .cache
 *.pyc
+.run_env
+.updated
 
