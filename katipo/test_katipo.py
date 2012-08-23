@@ -84,6 +84,10 @@ class TestKatipoFindRoot(TestWithRepoSetup):
 	def test_find_root(self):
 		"""Check that Katipo can find a katipo root after it is created."""
 		katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'))
+		# Check that you can find it inside a folder
+		os.mkdir(os.path.join(self.tempfolder, 'workingcopy', 'test', 'foo'))
+		katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy',
+											'test', 'foo'))
 
 
 class TestKatipoSchemeVersion(TestWithRepoSetup):
