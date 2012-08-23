@@ -70,6 +70,17 @@ class Command_about(Command):
 		webbrowser.open('https://github.com/braincorp/katipo')
 
 
+class Command_perrepo(Command):
+	def construct_parser(self, parser):
+		parser.add_argument('external_cmd', type=str,
+						nargs=argparse.REMAINDER, help='command to run per repo')
+
+	def exec_cmd(self, args, working_dir):
+		logging.info('Executing command', args.external_cmd)
+		k = katipo.KatipoRoot(folder=working_dir)
+		k.run_cmd_per_repo(args.external_cmd)
+
+
 def build_arg_parser():
 	toplevel_parser = argparse.ArgumentParser(description=
 											'katipo: deal with multiple git repos')
