@@ -63,6 +63,29 @@ class TestKatipoRootBasics(TestWithRepoSetup):
 		self.assertRaises(Exception, _run)
 
 
+class TestKatipoFindRoot(TestWithRepoSetup):
+	test_repo_description = {
+				'katipo_schema': 1,
+				'repos': [
+				{'path': "test", 'test': True,
+					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
+										'exec': True}}},
+				{'path': 'notest', 'test': False,
+					'files': {'notest': {'content': 'Hello\n'}}}
+				]}
+
+	def setUp(self):
+		TestWithRepoSetup.setUp(self)
+		# Create a katipo working folder
+		k = katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
+				assemblyfile='testassembly.katipo')
+
+	def test_find_root(self):
+		"""Check that Katipo can find a katipo root after it is created."""
+		katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'))
+
+
 class TestKatipoSchemeVersion(TestWithRepoSetup):
 	"""Check that the schema is checked and an Exception is raised if scheme
 	is unknown (positive test case is implicit since it is need for other tests

@@ -54,7 +54,8 @@ class KatipoRoot(object):
 		if giturl is None:
 			logging.info('Creating katipo from prexisting root')
 			assert(assemblyfile is None)
-			self._find_ketapo_root(folder)
+			self._find_katipo_root(folder)
+			self._reload_katipo_root()
 		else:
 			logging.info('Clone new katipo root')
 			assert(assemblyfile is not None)
@@ -70,9 +71,27 @@ class KatipoRoot(object):
 					pass
 				raise exc_info[1], None, exc_info[2]
 
-	def _find_ketapo_root(self, folder):
+	def _find_katipo_root(self, folder):
 		"""Load in a katipo setup."""
-		raise NotImplementedError()
+		# Start from folder and find the root
+		# Ensure we check this folder first
+		last_checked = None
+		while folder != last_checked:
+			if os.path.exists(os.path.join(folder, '.katipo')):
+				logging.info('Found katipo root in %s' % folder)
+				self._katipo_root = os.path.join(folder, '.katipo')
+				return
+			last_checked = folder
+			folder = os.path.split(folder)[0]
+		raise KatipoException('Unable to find .katipo root')
+
+	def _reload_katipo_root(self):
+		"""Reload the assembly file."""
+		self._load_assembly()
+
+	def _load_assembly(self):
+		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
+								self._katipo_root, 'assembly_file')))))
 
 	def _clone(self, folder, assembly_giturl, assemblyfile):
 		"""Initial a katipo setup in folder from assemblyfile in
@@ -82,8 +101,10 @@ class KatipoRoot(object):
 		self._create_katipo_root_folder(folder)
 		self._assembly_repo = git.Repo.clone_from(assembly_giturl,
 								os.path.join(self._katipo_root, 'assembly'))
-		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
-								self._katipo_root, 'assembly', assemblyfile)))))
+		# Create a symlink to the assembly file to use
+		os.symlink(os.path.join(self._katipo_root, 'assembly', assemblyfile),
+				os.path.join(self._katipo_root, 'assembly_file'))
+		self._load_assembly()
 		for repo in self.assembly.repos:
 			# Clone each repo
 			git.Repo.clone_from(repo['giturl'], os.path.join(self._workingcopy_root,
