@@ -126,10 +126,12 @@ class KatipoRoot(object):
 	def run_cmd_per_repo(self, cmd, test_only=False):
 		"""Run shell command (given as a list) for all repos (or only test repos)."""
 		return_code = 0
+		logging.info('Running cmd per repo %s' % str(cmd))
 		for repo in self.assembly.repos:
-			p = subprocess.Popen(cmd, cwd=os.path.abspath(
-								os.path.join(self._working_copy_root,
-											repo['path'])),
-								shell=True)
-			return_code += p.wait()
+			if not test_only or repo['test'] is True:
+				p = subprocess.Popen(' '.join(cmd), cwd=os.path.abspath(
+									os.path.join(self._working_copy_root,
+												repo['path'])),
+									shell=True)
+				return_code += p.wait()
 		return return_code

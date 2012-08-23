@@ -45,8 +45,16 @@ class Command(object):
 	@classmethod
 	def get_commands(cls):
 		if not hasattr(cls, '_commands'):
-			cls._commands = [cmd() for cmd in Command.__subclasses__()]
+			cls._commands = [cmd() for cmd in cls._get_subclasses()]
 		return cls._commands
+
+	@classmethod
+	def _get_subclasses(cls):
+		"""Find all subclasses of this class."""
+		subclasses = cls.__subclasses__()
+		for sub in subclasses:
+			subclasses.extend(sub._get_subclasses())
+		return subclasses
 
 
 class Command_clone(Command):
@@ -79,6 +87,16 @@ class Command_perrepo(Command):
 		logging.info('Executing command', args.external_cmd)
 		k = katipo.KatipoRoot(folder=working_dir)
 		k.run_cmd_per_repo(args.external_cmd)
+
+
+class Command_test(Command_perrepo):
+	def exec_cmd(self, args, working_dir):
+		external_cmd = args.external_cmd
+		if len(external_cmd) == 0:
+			external_cmd = ['./test']
+		logging.info('Executing command %s' % str(external_cmd))
+		k = katipo.KatipoRoot(folder=working_dir)
+		k.run_cmd_per_repo(external_cmd, test_only=True)
 
 
 def build_arg_parser():
