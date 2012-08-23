@@ -63,7 +63,7 @@ class TestKatipoRootBasics(TestWithRepoSetup):
 		self.assertRaises(Exception, _run)
 
 
-class TestKatipoFindRoot(TestWithRepoSetup):
+class TestWithWorkingCopyCommands(TestWithRepoSetup):
 	test_repo_description = {
 				'katipo_schema': 1,
 				'repos': [
@@ -77,7 +77,8 @@ class TestKatipoFindRoot(TestWithRepoSetup):
 	def setUp(self):
 		TestWithRepoSetup.setUp(self)
 		# Create a katipo working folder
-		k = katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy'),
+		self.k = katipo.KatipoRoot(folder=os.path.join(
+				self.tempfolder, 'workingcopy'),
 				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
 				assemblyfile='testassembly.katipo')
 
@@ -88,6 +89,9 @@ class TestKatipoFindRoot(TestWithRepoSetup):
 		os.mkdir(os.path.join(self.tempfolder, 'workingcopy', 'test', 'foo'))
 		katipo.KatipoRoot(folder=os.path.join(self.tempfolder, 'workingcopy',
 											'test', 'foo'))
+
+	def test_run_cmd_per_repo(self):
+		self.k.run_cmd_per_repo(['ls'])
 
 
 class TestKatipoSchemeVersion(TestWithRepoSetup):

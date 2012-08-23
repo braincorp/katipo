@@ -24,6 +24,7 @@ import logging
 import json
 import sys
 import shutil
+import subprocess
 
 
 class KatipoException(Exception):
@@ -79,6 +80,7 @@ class KatipoRoot(object):
 		while folder != last_checked:
 			if os.path.exists(os.path.join(folder, '.katipo')):
 				logging.info('Found katipo root in %s' % folder)
+				self._working_copy_root = folder
 				self._katipo_root = os.path.join(folder, '.katipo')
 				return
 			last_checked = folder
@@ -107,7 +109,7 @@ class KatipoRoot(object):
 		self._load_assembly()
 		for repo in self.assembly.repos:
 			# Clone each repo
-			git.Repo.clone_from(repo['giturl'], os.path.join(self._workingcopy_root,
+			git.Repo.clone_from(repo['giturl'], os.path.join(self._working_copy_root,
 														repo['path']))
 
 	def _create_katipo_root_folder(self, folder):
@@ -119,4 +121,15 @@ class KatipoRoot(object):
 		katipo_root = os.path.join(folder, '.katipo')
 		os.mkdir(os.path.join(katipo_root))
 		self._katipo_root = katipo_root
-		self._workingcopy_root = os.path.abspath(folder)
+		self._working_copy_root = os.path.abspath(folder)
+
+	def run_cmd_per_repo(self, cmd, test_only=False):
+		"""Run shell command (given as a list) for all repos (or only test repos)."""
+		return_code = 0
+		for repo in self.assembly.repos:
+			p = subprocess.Popen(cmd, cwd=os.path.abspath(
+								os.path.join(self._working_copy_root,
+											repo['path'])),
+								shell=True)
+			return_code += p.wait()
+		return return_code
