@@ -64,12 +64,13 @@ class KatipoRoot(object):
 				self._clone(folder, giturl, assemblyfile)
 			except:
 				exc_info = sys.exc_info()
-				try:
-					logging.warning('Removing incomplete katipo root %s'
-							% self._katipo_root)
-					shutil.rmtree(self._katipo_root)
-				except:
-					pass
+				if hasattr(self, '_katipo_root'):
+					logging.warning('Removing incomplete katipo root %s' %
+								self._katipo_root)
+					try:
+						shutil.rmtree(self._katipo_root)
+					except:
+						pass
 				raise exc_info[1], None, exc_info[2]
 
 	def _find_katipo_root(self, folder):
