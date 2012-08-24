@@ -99,6 +99,17 @@ class Command_test(Command_perrepo):
 		k.run_cmd_per_repo(external_cmd, test_only=True)
 
 
+class Command_checkout(Command):
+	def construct_parser(self, parser):
+		parser.add_argument('-t', '--tracking', help='Create tracking branch',
+						action="store_true")
+		parser.add_argument('branch', help='Branch to checkout')
+
+	def exec_cmd(self, args, working_dir):
+		k = katipo.KatipoRoot(folder=working_dir)
+		k.checkout(args.branch, tracking=args.tracking)
+
+
 def build_arg_parser():
 	toplevel_parser = argparse.ArgumentParser(description=
 											'katipo: deal with multiple git repos')
