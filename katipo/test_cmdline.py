@@ -86,4 +86,4 @@ class TestCheckout(TestWithClone):
 		cmdline.run_args(['checkout', '-t', 'origin/test-branch'],
 				os.path.join(self.tempfolder, 'workingcopy'))
 		assert os.path.exists(os.path.join(self.tempfolder,
-							'workingcopy', 'test', 'foo'))
+							'workingcopy', 'test', 'testfoo'))
