@@ -29,7 +29,7 @@ class TestClone(TestWithRepoSetup):
 				'katipo_schema': 1,
 				'repos': [
 				{'path': "test", 'test': True,
-					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
+					'files': {'test': {'content': '#!/bin/sh\ntouch testran\n',
 										'exec': True}}},
 				{'path': 'notest', 'test': False,
 					'files': {'notest': {'content': 'Hello\n'}}}
@@ -51,3 +51,19 @@ class TestClone(TestWithRepoSetup):
 		self.clone()
 		cmdline.run_args(['perrepo', 'ls', '-l'], working_dir=
 				os.path.join(self.tempfolder, 'workingcopy'))
+
+	def test_test_cmd(self):
+		self.clone()
+		cmdline.run_args(['test', 'touch', 'foo3'], working_dir=
+				os.path.join(self.tempfolder, 'workingcopy'))
+		assert os.path.exists(os.path.join(self.tempfolder,
+							'workingcopy', 'test', 'foo3'))
+		assert not os.path.exists(os.path.join(self.tempfolder,
+							'workingcopy', 'notest', 'foo3'))
+
+	def test_test_cmd_no_args(self):
+		self.clone()
+		cmdline.run_args(['test'], working_dir=
+				os.path.join(self.tempfolder, 'workingcopy'))
+		assert os.path.exists(os.path.join(self.tempfolder,
+							'workingcopy', 'test', 'testran'))
