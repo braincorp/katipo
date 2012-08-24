@@ -139,15 +139,19 @@ class KatipoRoot(object):
 		"""Checkout branch in every repo."""
 		# First see if this branch refers to an origin
 		if len(branch_name.split('/')) > 1:
-			origin = branch_name.split('/')
+			origin = branch_name.split('/')[0]
 		else:
 			origin = None
 		for repo in self.assembly.repos:
 			logging.info('checkout %s in repo %s' % (branch_name, repo['path']))
 			gitrepo = git.Repo(os.path.join(self._working_copy_root, repo['path']))
-			if origin is not None:
-				gitrepo.git.fetch(origin)
+			try:
+				if origin is not None:
+					gitrepo.git.fetch(origin)
 				if tracking:
 					gitrepo.git.checkout('-t', branch_name)
 				else:
 					gitrepo.git.checkout(branch_name)
+			except git.GitCommandError, e:
+				logging.info('git checkout failed with %s' % e.message)
+				print 'Branch doesn\'t exist on repo %s' % repo['path']
