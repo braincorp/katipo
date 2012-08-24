@@ -18,6 +18,7 @@
 #  This notice shall supercede any other notices contained within the software.
 # =============================================================================
 import unittest
+import pytest
 
 import cmdline
 from test_reposetup import TestWithRepoSetup
@@ -31,6 +32,12 @@ class TestWithClone(TestWithRepoSetup):
 		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
 				'assemblies'), 'testassembly.katipo'], working_dir=
 				os.path.join(self.tempfolder, 'workingcopy'))
+
+
+class TestStandaloneCommands(unittest.TestCase):
+	def test_version(self):
+		with pytest.raises(SystemExit):
+			cmdline.run_args(['--version'], os.getcwd())
 
 
 class TestCommands(TestWithClone):

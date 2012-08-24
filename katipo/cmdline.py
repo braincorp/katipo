@@ -27,6 +27,7 @@ import abc
 import os
 import webbrowser
 import katipo
+from __init__ import __version__
 
 
 class Command(object):
@@ -114,6 +115,9 @@ def build_arg_parser():
 	toplevel_parser = argparse.ArgumentParser(description=
 											'katipo: deal with multiple git repos')
 	subparsers = toplevel_parser.add_subparsers(help='sub-command help')
+	toplevel_parser.add_argument('-v', '--version', help='Query version',
+								action='version',
+								version='katipo %s' % __version__)
 	for cmd in Command.get_commands():
 		logging.info('Adding command %s', cmd.command_name)
 		cmd_parser = subparsers.add_parser(cmd.command_name, help=cmd.__doc__)
