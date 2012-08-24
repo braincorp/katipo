@@ -134,3 +134,20 @@ class KatipoRoot(object):
 								shell=True)
 			return_code += p.wait()
 		return return_code
+
+	def checkout(self, branch_name, tracking=False):
+		"""Checkout branch in every repo."""
+		# First see if this branch refers to an origin
+		if len(branch_name.split('/')) > 1:
+			origin = branch_name.split('/')
+		else:
+			origin = None
+		for repo in self.assembly.repos:
+			logging.info('checkout %s in repo %s' % (branch_name, repo['path']))
+			gitrepo = git.Repo(os.path.join(self._working_copy_root, repo['path']))
+			if origin is not None:
+				gitrepo.git.fetch(origin)
+				if tracking:
+					gitrepo.git.checkout('-t', branch_name)
+				else:
+					gitrepo.git.checkout(branch_name)

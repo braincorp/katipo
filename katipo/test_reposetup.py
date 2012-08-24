@@ -30,10 +30,21 @@ import json
 import shutil
 
 
-def create_repo_with_files(repo_path, files):
+def create_repo_with_files(repo_path, files, branch=None):
 	"""Create a git repo at repo_path containing files (list of dicts with
 	{'filename' : {'content' : 'content', 'exec' : true }} exec is optional"""
 	repo = git.Repo.init(repo_path, True)
+	if branch is not None:
+		# Create everything in a branch
+		# First create an empty master branch
+		logging.info('Creating on branch %s' % branch)
+		filename = os.path.join(repo.working_dir, '_master')
+		with open(filename, 'w') as f:
+			pass
+		repo.git.add(filename)
+		repo.git.commit(m='dummy master branch')
+		repo.git.checkout(b=branch)
+
 	for filename, desc in files.iteritems():
 		logging.info('Creating test file %s' % filename)
 		full_filename = os.path.join(repo.working_dir, filename)
@@ -43,6 +54,10 @@ def create_repo_with_files(repo_path, files):
 			os.chmod(full_filename, 0744)
 		repo.git.add(full_filename)
 	repo.git.commit(m=' "added files"')
+
+	# Now switch back to make master the default branch
+	if branch is not None:
+		repo.git.checkout('master')
 
 
 class TestWithRepoSetup(unittest.TestCase):
@@ -64,7 +79,8 @@ class TestWithRepoSetup(unittest.TestCase):
 		for repo in self.test_repo_description['repos']:
 			# Create this repo
 			giturl = os.path.join(self.tempfolder, 'gitrepos', repo['path'])
-			create_repo_with_files(giturl, repo['files'])
+			create_repo_with_files(giturl, repo['files'],
+								branch=repo.get('branch', None))
 			assembly_repos.append({'path': repo['path'],
 								'test': repo['test'], 'giturl': giturl})
 		self._assembly_desc = copy.copy(self.test_repo_description)

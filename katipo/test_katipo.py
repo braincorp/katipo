@@ -111,3 +111,24 @@ class TestKatipoSchemeVersion(TestWithRepoSetup):
 				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
 				assemblyfile='testassembly.katipo')
 		self.assertRaises(Exception, _run)
+
+
+class TestKatipoCheckout(TestWithRepoSetup):
+	test_repo_description = {
+			'katipo_schema': 1,
+			'repos': [
+			{'path': "test", 'test': True, 'branch': 'test-branch',
+				'files': {'testfoo': {'content': 'foo'}}}]}
+
+	def setUp(self):
+		TestWithRepoSetup.setUp(self)
+		# Create a katipo working folder
+		self.k = katipo.KatipoRoot(folder=os.path.join(
+				self.tempfolder, 'workingcopy'),
+				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
+				assemblyfile='testassembly.katipo')
+
+	def test_checkout_single_branch(self):
+		self.k.checkout('origin/test-branch')
+		assert os.path.exists(os.path.join(self.tempfolder,
+										'workingcopy', 'test', 'testfoo'))
