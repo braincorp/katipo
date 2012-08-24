@@ -24,7 +24,16 @@ from test_reposetup import TestWithRepoSetup
 import os
 
 
-class TestClone(TestWithRepoSetup):
+class TestWithClone(TestWithRepoSetup):
+	"""Helper class with clone command"""
+	def clone(self):
+		"""Make working copy (used in other tests)."""
+		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
+				'assemblies'), 'testassembly.katipo'], working_dir=
+				os.path.join(self.tempfolder, 'workingcopy'))
+
+
+class TestCommands(TestWithClone):
 	test_repo_description = {
 				'katipo_schema': 1,
 				'repos': [
@@ -34,12 +43,6 @@ class TestClone(TestWithRepoSetup):
 				{'path': 'notest', 'test': False,
 					'files': {'notest': {'content': 'Hello\n'}}}
 				]}
-
-	def clone(self):
-		"""Make working copy (used in other tests)."""
-		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
-				'assemblies'), 'testassembly.katipo'], working_dir=
-				os.path.join(self.tempfolder, 'workingcopy'))
 
 	def test_clone(self):
 		self.clone()
@@ -51,3 +54,20 @@ class TestClone(TestWithRepoSetup):
 		self.clone()
 		cmdline.run_args(['perrepo', 'ls', '-l'], working_dir=
 				os.path.join(self.tempfolder, 'workingcopy'))
+
+
+class TestCheckout(TestWithClone):
+	test_repo_description = {
+			'katipo_schema': 1,
+			'repos': [
+			{'path': "test", 'test': True, 'branch': 'test-branch',
+				'files': {'testfoo': {'content': 'foo'}}},
+			{'path': 'onlymaster', 'test': True,
+				'files': {'testonlymaster': {'content': 'foo'}}}]}
+
+	def test_checkout(self):
+		self.clone()
+		cmdline.run_args(['checkout', '-t', 'origin/test-branch'],
+				os.path.join(self.tempfolder, 'workingcopy'))
+		assert os.path.exists(os.path.join(self.tempfolder,
+							'workingcopy', 'test', 'foo'))
