@@ -29,7 +29,7 @@ MAXAGE=$(bc <<< '24*60*60') # seconds in a day
 if [[ $(uname) == 'Darwin' ]]; then
 	STAT_CMD="stat -f %c ";
 else
-	STAT_CMD="stat -c '%Y' ";
+	STAT_CMD="stat -c %Y ";
 fi
 
 FILEAGE=`expr $(date +%s) - $($STAT_CMD "$UPDATE_FILE")`
