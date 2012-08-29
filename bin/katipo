@@ -52,9 +52,9 @@ if [ -d "$KATIPO_ROOT_DIR/.run_env" ]; then
    true
 else
    echo "**> creatinv virtualenv"
-   virtualenv "$KATIPO_ROOT_DIR/.run_env" --prompt "(katipo-runenv) " --extra-search-dir=$PWD -p $PYTHONEXEC
+   virtualenv "$KATIPO_ROOT_DIR/.run_env" --prompt "(katipo-runenv) " --extra-search-dir=$KATIPO_ROOT_DIR -p $PYTHONEXEC
    # During development - add this folder to the PYTHONPATH
-   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$KATIPO_ROOT_DIR:\$PYTHONPATH\"\n" >> $PWD/.run_env/bin/activate
+   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$KATIPO_ROOT_DIR:\$PYTHONPATH\"\n" >> $KATIPO_ROOT_DIR/.run_env/bin/activate
 fi
 
 source "$KATIPO_ROOT_DIR/.run_env/bin/activate"
