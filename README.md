@@ -33,6 +33,20 @@ it a tracking branch.
 Run `test.sh` in every repo which is a test repo.
 
 
+Installation
+--------------
+The recommended method of installation at the moment (until it matures) is to clone
+the Katipo repo.
+
+    git clone git@github.com:braincorp/katipo.git
+
+Then access the katipo command by running
+
+    ./katipo/bin/katipo   
+
+Note that the first time you run this command it may take awhile as it will automatically
+install dependencies for katipo.
+
 Assembly files
 --------------
 Assembly files are JSON files which describe the intended working copy layout. They are just a 
