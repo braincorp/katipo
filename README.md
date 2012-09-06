@@ -41,7 +41,7 @@ list of repos.
 The look like:
 
     {
-    "katipo_schema" : 1
+    "version" : 1
     "repos": [
         {"giturl" : "git@github.com/braincorp/test.git",
             "path":"test",
@@ -50,9 +50,13 @@ The look like:
     }
     
 
+`version` describes version of the assembly file. Right now should be always `1`
+
 `path` is optional and indicates the location where this repo will be located in the 
 working copy.
 
 `test` is optional and indicates if changes are tested against this repo or if it is just
 a dependency. It defaults to `false`.
+
+
 
