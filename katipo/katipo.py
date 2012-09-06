@@ -37,6 +37,9 @@ class Assembly(object):
 	Initialize with a JSON description of an assembly file."""
 	def __init__(self, description):
 		self.description = description
+		if not 'katipo_schema' in self.description:
+			self.description['katipo_schema'] = 1
+
 		if self.description['katipo_schema'] != 1:
 			# Only recognise one schema at the moment
 			raise KatipoException('Unknown katipo schema %s' %
@@ -108,10 +111,12 @@ class KatipoRoot(object):
 		os.symlink(os.path.join(self._katipo_root, 'assembly', assemblyfile),
 				os.path.join(self._katipo_root, 'assembly_file'))
 		self._load_assembly()
-		for repo in self.assembly.repos:
+		for repo_params in self.assembly.repos:
 			# Clone each repo
-			git.Repo.clone_from(repo['giturl'], os.path.join(self._working_copy_root,
-														repo['path']))
+			repo = git.Repo.clone_from(repo_params['giturl'], os.path.join(self._working_copy_root,
+														repo_params['path']))
+			if 'branch' in repo_params:
+				repo.git.checkout('head', b = repo_params['branch'])
 
 	def _create_katipo_root_folder(self, folder):
 		"""Create a .katipo root folder."""
