@@ -42,7 +42,7 @@ class TestStandaloneCommands(unittest.TestCase):
 
 class TestCommands(TestWithClone):
 	test_repo_description = {
-				'katipo_schema': 1,
+				'version': 1,
 				'repos': [
 				{'path': "test", 'test': True,
 					'files': {'test': {'content': '#!/bin/sh\ntouch testran\n',
@@ -81,7 +81,7 @@ class TestCommands(TestWithClone):
 
 class TestCheckout(TestWithClone):
 	test_repo_description = {
-			'katipo_schema': 1,
+			'version': 1,
 			'repos': [
 			{'path': "test", 'test': True, 'branch': 'test-branch',
 				'files': {'testfoo': {'content': 'foo'}}},

@@ -32,7 +32,7 @@ from test_reposetup import TestWithRepoSetup
 
 class TestKatipoRootBasics(TestWithRepoSetup):
 	test_repo_description = {
-				'katipo_schema': 1,
+				'version': 1,
 				'repos': [
 				{'path': "test", 'test': True,
 					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
@@ -65,7 +65,7 @@ class TestKatipoRootBasics(TestWithRepoSetup):
 
 class TestWithWorkingCopyCommands(TestWithRepoSetup):
 	test_repo_description = {
-				'katipo_schema': 1,
+				'version': 1,
 				'repos': [
 				{'path': "test", 'test': True,
 					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
@@ -99,7 +99,7 @@ class TestKatipoSchemeVersion(TestWithRepoSetup):
 	is unknown (positive test case is implicit since it is need for other tests
 	to pass."""
 	test_repo_description = {
-				'katipo_schema': 2,
+				'version': 2,
 				'repos': [
 				{'path': "test", 'test': True,
 					'files': {'test': {'content': '#!/bin/sh\necho Testing\n',
@@ -115,7 +115,7 @@ class TestKatipoSchemeVersion(TestWithRepoSetup):
 
 class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 	test_repo_description = {
-			'katipo_schema': 1,
+			'version': 1,
 			'repos': [
 			{'path': "test", 'test': True, 'branch': 'test-branch',
 				'files': {'testfoo': {'content': 'foo'}}}]}
@@ -136,7 +136,7 @@ class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 
 class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 	test_repo_description = {
-			'katipo_schema': 1,
+			'version': 1,
 			'repos': [
 			{'path': "test", 'test': True, 'branch': 'test-branch',
 				'files': {'testfoo': {'content': 'foo'}}},

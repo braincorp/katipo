@@ -37,13 +37,10 @@ class Assembly(object):
 	Initialize with a JSON description of an assembly file."""
 	def __init__(self, description):
 		self.description = description
-		if not 'katipo_schema' in self.description:
-			self.description['katipo_schema'] = 1
-
-		if self.description['katipo_schema'] != 1:
+		if self.description['version'] != 1:
 			# Only recognise one schema at the moment
-			raise KatipoException('Unknown katipo schema %s' %
-								str(self.description['schema']))
+			raise KatipoException('Unknown katipo version %s' %
+								str(self.description['version']))
 		self.repos = description['repos']
 		logging.info('Assembly object with repos %s' % json.dumps(
 												description, indent=4))
