@@ -113,10 +113,12 @@ class KatipoRoot(object):
 		self._load_assembly()
 		for repo_params in self.assembly.repos:
 			# Clone each repo
-			repo = git.Repo.clone_from(repo_params['giturl'], os.path.join(self._working_copy_root,
-														repo_params['path']))
+			repo = git.Repo.clone_from(repo_params['giturl'],
+									os.path.join(self._working_copy_root,
+									repo_params['path']))
+
 			if 'branch' in repo_params:
-				repo.git.checkout('head', b = repo_params['branch'])
+				repo.git.checkout('head', b=repo_params['branch'])
 
 	def _create_katipo_root_folder(self, folder):
 		"""Create a .katipo root folder."""
