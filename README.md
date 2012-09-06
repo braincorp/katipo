@@ -32,6 +32,25 @@ it a tracking branch.
 
 Run `test.sh` in every repo which is a test repo.
 
+Python virtual environment setup.
+---------------
+Katipo contains support for setting up your python environment (using virtualenv).
+It only works in virtualenv is installed.
+
+     katipo virtualenv [--prompt virtualenv prompt] [--python pythonexe]
+
+will construct a virtualenv in root of the working folder/.env . It will populate the
+virtualenv with the concatenated version of all requirements.txt files found in the base
+of every repo (and readline if on OS X to work around the buggy readline installed by 
+default). Additionally, it will modify the virtualenv script to add the base of every
+repo the PYTHONPATH.
+
+Once this command has run then activate the environment by running.
+
+	source ./env/bin/activate
+
+in the base of the working folder.
+
 
 Installation
 --------------
