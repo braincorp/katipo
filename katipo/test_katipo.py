@@ -75,12 +75,7 @@ class TestWithWorkingCopyCommands(TestWithRepoSetup):
 				]}
 
 	def setUp(self):
-		TestWithRepoSetup.setUp(self)
-		# Create a katipo working folder
-		self.k = katipo.KatipoRoot(folder=os.path.join(
-				self.tempfolder, 'workingcopy'),
-				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
-				assemblyfile='testassembly.katipo')
+		TestWithRepoSetup.setUp(self, checkout=True)
 
 	def test_find_root(self):
 		"""Check that Katipo can find a katipo root after it is created."""
@@ -121,12 +116,7 @@ class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 				'files': {'testfoo': {'content': 'foo'}}}]}
 
 	def setUp(self):
-		TestWithRepoSetup.setUp(self)
-		# Create a katipo working folder
-		self.k = katipo.KatipoRoot(folder=os.path.join(
-				self.tempfolder, 'workingcopy'),
-				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
-				assemblyfile='testassembly.katipo')
+		TestWithRepoSetup.setUp(self, checkout=True)
 
 	def test_checkout_single_branch(self):
 		self.k.checkout('origin/test-branch')
@@ -144,12 +134,7 @@ class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 				'files': {'testonlymaster': {'content': 'foo'}}}]}
 
 	def setUp(self):
-		TestWithRepoSetup.setUp(self)
-		# Create a katipo working folder
-		self.k = katipo.KatipoRoot(folder=os.path.join(
-				self.tempfolder, 'workingcopy'),
-				giturl=os.path.join(self.tempfolder, 'gitrepos/assemblies'),
-				assemblyfile='testassembly.katipo')
+		TestWithRepoSetup.setUp(self, checkout=True)
 
 	def test_checkout_conflicting_branches(self):
 		self.k.checkout('origin/test-branch')
@@ -157,3 +142,26 @@ class TestKatipoCheckoutSingleBranch(TestWithRepoSetup):
 										'workingcopy', 'test', 'testfoo'))
 		assert os.path.exists(os.path.join(self.tempfolder,
 										'workingcopy', 'onlymaster', 'testonlymaster'))
+
+
+class TestKatipoVirtualEnv(TestWithRepoSetup):
+	test_repo_description = {
+			'version': 1,
+			'repos': [
+			{'path': "foo", 'test': False,
+				'files': {'requirements.txt': {'content': 'pytest==2.2.4\n'}}},
+			{'path': 'foo2', 'test': True,
+				'files': {'requirements.txt': {'content': 'pytest-capturelog==0.7'}}}]}
+
+	def setUp(self):
+		TestWithRepoSetup.setUp(self, checkout=True)
+
+	def test_virtualenv(self):
+		self.k.setup_virtualenv()
+		# Check that a virtual environment was create
+		assert os.path.exists(os.path.join(self.tempfolder,
+										'workingcopy', '.env'))
+		# Check that the PYTHONPATH was added correctly
+		# Check that pointer to tempfolder was added to activate.
+		assert open(os.path.join(self.tempfolder, 'workingcopy', '.env',
+						'bin', 'activate')).read().find(self.tempfolder) != -1
