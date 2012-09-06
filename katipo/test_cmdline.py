@@ -23,6 +23,7 @@ import pytest
 import cmdline
 from test_reposetup import TestWithRepoSetup
 import os
+import mock
 
 
 class TestWithClone(TestWithRepoSetup):
@@ -94,3 +95,16 @@ class TestCheckout(TestWithClone):
 				os.path.join(self.tempfolder, 'workingcopy'))
 		assert os.path.exists(os.path.join(self.tempfolder,
 							'workingcopy', 'test', 'testfoo'))
+
+
+# Flat test using py.test monkey patching support
+def test_virtualenv_command(monkeypatch):
+	k = mock.Mock()
+	monkeypatch.setattr(cmdline.katipo, 'KatipoRoot', k)
+	cmdline.run_args(['virtualenv'])
+	k.return_value.setup_virtualenv.assert_called_with(
+												python_exe=None, prompt=None)
+
+	cmdline.run_args(['virtualenv', '--python', 'python27', '--prompt', 'foo'])
+	k.return_value.setup_virtualenv.assert_called_with(
+												python_exe='python27', prompt='foo')

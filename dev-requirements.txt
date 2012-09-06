@@ -16,3 +16,5 @@ Sphinx==1.1.2
 # Readline must be installed before ipython
 ipython==0.13
 
+mock==0.8.0
+
