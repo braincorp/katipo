@@ -47,7 +47,7 @@ repo the PYTHONPATH.
 
 Once this command has run then activate the environment by running.
 
-	source ./env/bin/activate
+	source .env/bin/activate
 
 in the base of the working folder.
 
