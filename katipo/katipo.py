@@ -229,10 +229,10 @@ class KatipoRoot(object):
 
 		# Workaround on OS X - install readline.
 		if sys.platform == 'darwin':
-			os.system('source %s/bin/activate && easy_install -q readline' %
+			os.system('. %s/bin/activate && easy_install -q readline' %
 					virtual_env_path)
 
-		os.system('source %s/bin/activate && pip install -q -r %s' %
+		os.system('. %s/bin/activate && pip install -q -r %s' %
 				(virtual_env_path, reqfile.name))
 
 	def _create_virtual_env(self, virtual_env_path, python_exe, prompt):
