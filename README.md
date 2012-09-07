@@ -84,6 +84,14 @@ The look like:
 	# Optional python virtualenv parameters 
 	# prompt - virtualenv prompt shown when environment active.
 	"virtualenv" : { "prompt" : "katipo" }
+	
+	# Base files
+	"base_files" : {
+		 "use_repo.sh" :
+			{"content" :
+"# Source this script to setup the environment for this package
+"			}
+		}
     }
 
 

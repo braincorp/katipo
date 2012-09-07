@@ -123,6 +123,18 @@ class KatipoRoot(object):
 			if 'branch' in repo_params:
 				repo.git.checkout('head', b=repo_params['branch'])
 
+		self._create_base_files()
+
+	def _create_base_files(self):
+		"""Base files can be defined in the assembly file (see readme). Create
+		them now."""
+		if 'base_files' not in self.assembly.description:
+			return
+		for filename, file_desc in \
+				self.assembly.description['base_files'].iteritems():
+			open(os.path.join(self._working_copy_root,
+							filename), 'w').write(file_desc['content'])
+
 	def _create_katipo_root_folder(self, folder):
 		"""Create a .katipo root folder."""
 		# The reason for not placing .katipo_root in self immediately

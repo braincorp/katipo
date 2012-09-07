@@ -191,3 +191,23 @@ class TestKatipoVirtualEnvWithPrompt(TestWithRepoSetup):
 		# Check that pointer to tempfolder was added to activate.
 		assert open(os.path.join(self.tempfolder, 'workingcopy', '.env',
 						'bin', 'activate')).read().find('katipo_test_prompt') != -1
+
+
+class TestKatipoBaseFiles(TestWithRepoSetup):
+	test_repo_description = {
+			'version': 1,
+			'repos': [
+			{'path': "foo", 'test': False,
+				'files': {'requirements.txt': {'content': 'pytest==2.2.4\n'}}},
+			{'path': 'foo2', 'test': True,
+				'files': {'requirements.txt': {'content': 'pytest-capturelog==0.7'}}}],
+			'virtualenv': {'prompt': 'katipo_test_prompt'},
+			'base_files': {'use_repo.sh': {'content': '#!/bin/sh\n Some content'}}}
+
+	def setUp(self):
+		TestWithRepoSetup.setUp(self, checkout=True)
+
+	def test_base_files(self):
+		use_repo_path = os.path.join(self.tempfolder, 'workingcopy', 'use_repo.sh')
+		assert os.path.exists(use_repo_path)
+		assert open(use_repo_path).read().find('Some content') != -1
