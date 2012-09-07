@@ -25,6 +25,7 @@ import json
 import sys
 import shutil
 import subprocess
+import tempfile
 
 
 class KatipoException(Exception):
@@ -34,16 +35,21 @@ class KatipoException(Exception):
 class Assembly(object):
 	"""Class for dealing with assembly files.
 
-	Initialize with a JSON description of an assembly file."""
-	def __init__(self, description):
-		self.description = description
+	Initialize with a JSON (+ # comments)
+	description of an assembly file."""
+	def __init__(self, content):
+		self._parse_assembly_file(content)
 		if self.description['version'] != 1:
 			# Only recognise one schema at the moment
 			raise KatipoException('Unknown katipo version %s' %
 								str(self.description['version']))
-		self.repos = description['repos']
-		logging.info('Assembly object with repos %s' % json.dumps(
-												description, indent=4))
+		self.repos = self.description['repos']
+
+	def _parse_assembly_file(self, content):
+		lines = content.split('\n')
+		lines = [l for l in lines if len(l) != 0 and l[0] != '#']
+		print lines
+		self.description = json.loads('\n'.join(lines) + '\n')
 
 
 class KatipoRoot(object):
@@ -93,8 +99,8 @@ class KatipoRoot(object):
 		self._load_assembly()
 
 	def _load_assembly(self):
-		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
-								self._katipo_root, 'assembly_file')))))
+		self.assembly = Assembly(open(os.path.join(os.path.join(
+								self._katipo_root, 'assembly_file'))).read())
 
 	def _clone(self, folder, assembly_giturl, assemblyfile):
 		"""Initial a katipo setup in folder from assemblyfile in
@@ -116,6 +122,18 @@ class KatipoRoot(object):
 
 			if 'branch' in repo_params:
 				repo.git.checkout('head', b=repo_params['branch'])
+
+		self._create_base_files()
+
+	def _create_base_files(self):
+		"""Base files can be defined in the assembly file (see readme). Create
+		them now."""
+		if 'base_files' not in self.assembly.description:
+			return
+		for filename, file_desc in \
+				self.assembly.description['base_files'].iteritems():
+			open(os.path.join(self._working_copy_root,
+							filename), 'w').write(file_desc['content'])
 
 	def _create_katipo_root_folder(self, folder):
 		"""Create a .katipo root folder."""
@@ -161,3 +179,64 @@ class KatipoRoot(object):
 			except git.GitCommandError, e:
 				logging.info('git checkout failed with %s' % e.message)
 				print 'Branch doesn\'t exist on repo %s' % repo['path']
+
+	def setup_virtualenv(self, python_exe=None):
+		"""Create a python virtual in katipo_root/.env by concatenating all repos
+		requirements.txt file. Also edit the active file to add the repos
+		to the PYTHONPATH.
+
+		python_exe passed to virtualenv is not None.
+		prompt is also passed to virutalenv if not None"""
+
+		requirements = '\n'
+		for repo in self.assembly.repos:
+			try:
+				this_repo_reqs = open(os.path.join(self._working_copy_root,
+												repo['path'], 'requirements.txt')).read()
+				requirements += '# Reqs for %s' % repo['path']
+				requirements += this_repo_reqs
+				requirements += '\n'
+			except IOError:  # Ignore files that don't exist
+				pass
+
+		# Create a virtual env
+		try:
+			prompt = self.assembly.description['virtualenv']['prompt']
+		except KeyError:
+			prompt = None
+		virtual_env_path = os.path.abspath(os.path.join(
+													self._working_copy_root, '.env'))
+		if not os.path.exists(virtual_env_path):
+			self._create_virtual_env(virtual_env_path, python_exe, prompt)
+
+		# Add requirements.
+		self._add_virtualenv_requirements(virtual_env_path, requirements)
+
+		for repo in self.assembly.repos:
+			self._add_virtualenv_pythonpath(virtual_env_path,
+							os.path.join(self._working_copy_root, repo['path']))
+
+	def _add_virtualenv_pythonpath(self, virtual_env_path, python_path):
+		"""Add PYTHONPATH from each repo to the virtual environment."""
+		af = open(os.path.join(virtual_env_path, 'bin', 'activate'), 'a')
+		af.write('\n# Katipo adding to PYTHONPATH\n')
+		af.write('PYTHONPATH="%s":$PYTHONPATH\n' % python_path)
+
+	def _add_virtualenv_requirements(self, virtual_env_path, requirements):
+		"""Add requirements to an existing virtual env in path."""
+		reqfile = tempfile.NamedTemporaryFile()
+		reqfile.write(requirements)
+		reqfile.flush()
+
+		# Workaround on OS X - install readline.
+		if sys.platform == 'darwin':
+			os.system('%s/bin/activate && easy_install readline')
+
+		os.system('%s/bin/activate && pip install -r %s' %
+				(virtual_env_path, reqfile.name))
+
+	def _create_virtual_env(self, virtual_env_path, python_exe, prompt):
+		"""Create an empty virtual env"""
+		options = '--prompt %s' % prompt if prompt is not None else ''
+		options += ' -p %s' % python_exe if python_exe is not None else ''
+		os.system('virtualenv %s "%s"' % (options, virtual_env_path))

@@ -111,6 +111,16 @@ class Command_checkout(Command):
 		k.checkout(args.branch, tracking=args.tracking)
 
 
+class Command_virtualenv(Command):
+	def construct_parser(self, parser):
+		parser.add_argument('--python', help='Set virtualenv python',
+						action='store')
+
+	def exec_cmd(self, args, working_dir):
+		k = katipo.KatipoRoot(folder=working_dir)
+		k.setup_virtualenv(python_exe=args.python)
+
+
 def build_arg_parser():
 	toplevel_parser = argparse.ArgumentParser(description=
 											'katipo: deal with multiple git repos')
