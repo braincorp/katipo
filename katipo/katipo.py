@@ -187,14 +187,13 @@ class KatipoRoot(object):
 		python_exe passed to virtualenv is not None.
 		prompt is also passed to virutalenv if not None"""
 
-		requirements = '\n'
+		requirements = []
 		for repo in self.assembly.repos:
 			try:
 				this_repo_reqs = open(os.path.join(self._working_copy_root,
 												repo['path'], 'requirements.txt')).read()
-				requirements += '# Reqs for %s' % repo['path']
-				requirements += this_repo_reqs
-				requirements += '\n'
+				requirements.append('# Reqs for %s\n' % repo['path']
+								+ this_repo_reqs + '\n')
 			except IOError:  # Ignore files that don't exist
 				pass
 
@@ -209,7 +208,8 @@ class KatipoRoot(object):
 			self._create_virtual_env(virtual_env_path, python_exe, prompt)
 
 		# Add requirements.
-		self._add_virtualenv_requirements(virtual_env_path, requirements)
+		for req in requirements:
+			self._add_virtualenv_requirements(virtual_env_path, req)
 
 		for repo in self.assembly.repos:
 			self._add_virtualenv_pythonpath(virtual_env_path,
@@ -229,9 +229,10 @@ class KatipoRoot(object):
 
 		# Workaround on OS X - install readline.
 		if sys.platform == 'darwin':
-			os.system('%s/bin/activate && easy_install readline')
+			os.system('source %s/bin/activate && easy_install -q readline' %
+					virtual_env_path)
 
-		os.system('%s/bin/activate && pip install -r %s' %
+		os.system('source %s/bin/activate && pip install -q -r %s' %
 				(virtual_env_path, reqfile.name))
 
 	def _create_virtual_env(self, virtual_env_path, python_exe, prompt):

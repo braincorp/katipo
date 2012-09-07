@@ -170,6 +170,9 @@ class TestKatipoVirtualEnv(TestWithRepoSetup):
 		self.k.setup_virtualenv(python_exe='python')
 		assert os.path.exists(os.path.join(self.tempfolder,
 										'workingcopy', '.env'))
+		# Check that packages were installed
+		assert os.path.exists(os.path.join(self.tempfolder,
+						'workingcopy', '.env', 'bin', 'py.test'))
 
 
 class TestKatipoVirtualEnvWithPrompt(TestWithRepoSetup):
