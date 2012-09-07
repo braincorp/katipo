@@ -35,16 +35,21 @@ class KatipoException(Exception):
 class Assembly(object):
 	"""Class for dealing with assembly files.
 
-	Initialize with a JSON description of an assembly file."""
-	def __init__(self, description):
-		self.description = description
+	Initialize with a JSON (+ # comments)
+	description of an assembly file."""
+	def __init__(self, content):
+		self._parse_assembly_file(content)
 		if self.description['version'] != 1:
 			# Only recognise one schema at the moment
 			raise KatipoException('Unknown katipo version %s' %
 								str(self.description['version']))
-		self.repos = description['repos']
-		logging.info('Assembly object with repos %s' % json.dumps(
-												description, indent=4))
+		self.repos = self.description['repos']
+
+	def _parse_assembly_file(self, content):
+		lines = content.split('\n')
+		lines = [l for l in lines if len(l) != 0 and l[0] != '#']
+		print lines
+		self.description = json.loads('\n'.join(lines) + '\n')
 
 
 class KatipoRoot(object):
@@ -94,8 +99,8 @@ class KatipoRoot(object):
 		self._load_assembly()
 
 	def _load_assembly(self):
-		self.assembly = Assembly(json.load(open(os.path.join(os.path.join(
-								self._katipo_root, 'assembly_file')))))
+		self.assembly = Assembly(open(os.path.join(os.path.join(
+								self._katipo_root, 'assembly_file'))).read())
 
 	def _clone(self, folder, assembly_giturl, assemblyfile):
 		"""Initial a katipo setup in folder from assemblyfile in

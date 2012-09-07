@@ -98,9 +98,11 @@ class TestWithRepoSetup(unittest.TestCase):
 
 	def setup_assembly_file(self):
 		"""Create an assembly file and repo to hold it."""
+		# Add comment lines just to make the parser work harder
+		content = '# Comment Line\n' + json.dumps(self._assembly_desc, indent=4) + \
+			'\n# Comment Line\n'
 		create_repo_with_files(os.path.join(self.tempfolder, 'gitrepos',
-				'assemblies'), {'testassembly.katipo': {'content':
-										json.dumps(self._assembly_desc, indent=4)}})
+				'assemblies'), {'testassembly.katipo': {'content': content}})
 
 	def tearDown(self):
 		shutil.rmtree(self.tempfolder)
