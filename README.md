@@ -37,7 +37,7 @@ Python virtual environment setup.
 Katipo contains support for setting up your python environment (using virtualenv).
 It only works if virtualenv is installed.
 
-     katipo virtualenv [--prompt virtualenv prompt] [--python pythonexe]
+     katipo virtualenv [--python pythonexe]
 
 will construct a virtualenv in root of the working folder/.env . It will populate the
 virtualenv with the concatenated version of all requirements.txt files found in the base
@@ -80,8 +80,12 @@ The look like:
             "path":"test",
             "test"=true
     ]
+	# Comment Line - must be with a # in the first column
+	# Optional python virtualenv parameters 
+	# prompt - virtualenv prompt shown when environment active.
+	"virtualenv" : { "prompt" : "katipo" }
     }
-    
+
 
 `version` describes version of the assembly file. Right now should be always `1`
 
