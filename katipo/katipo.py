@@ -163,7 +163,7 @@ class KatipoRoot(object):
 				logging.info('git checkout failed with %s' % e.message)
 				print 'Branch doesn\'t exist on repo %s' % repo['path']
 
-	def setup_virtualenv(self, python_exe=None, prompt=None):
+	def setup_virtualenv(self, python_exe=None):
 		"""Create a python virtual in katipo_root/.env by concatenating all repos
 		requirements.txt file. Also edit the active file to add the repos
 		to the PYTHONPATH.
@@ -183,6 +183,10 @@ class KatipoRoot(object):
 				pass
 
 		# Create a virtual env
+		try:
+			prompt = self.assembly.description['virtualenv']['prompt']
+		except KeyError:
+			prompt = None
 		virtual_env_path = os.path.abspath(os.path.join(
 													self._working_copy_root, '.env'))
 		if not os.path.exists(virtual_env_path):

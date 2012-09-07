@@ -113,14 +113,12 @@ class Command_checkout(Command):
 
 class Command_virtualenv(Command):
 	def construct_parser(self, parser):
-		parser.add_argument('--prompt', help='Set virtualenv prompt',
-						action='store')
 		parser.add_argument('--python', help='Set virtualenv python',
 						action='store')
 
 	def exec_cmd(self, args, working_dir):
 		k = katipo.KatipoRoot(folder=working_dir)
-		k.setup_virtualenv(prompt=args.prompt, python_exe=args.python)
+		k.setup_virtualenv(python_exe=args.python)
 
 
 def build_arg_parser():

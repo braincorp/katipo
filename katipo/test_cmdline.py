@@ -103,8 +103,8 @@ def test_virtualenv_command(monkeypatch):
 	monkeypatch.setattr(cmdline.katipo, 'KatipoRoot', k)
 	cmdline.run_args(['virtualenv'])
 	k.return_value.setup_virtualenv.assert_called_with(
-												python_exe=None, prompt=None)
+												python_exe=None)
 
-	cmdline.run_args(['virtualenv', '--python', 'python27', '--prompt', 'foo'])
+	cmdline.run_args(['virtualenv', '--python', 'python27'])
 	k.return_value.setup_virtualenv.assert_called_with(
-												python_exe='python27', prompt='foo')
+												python_exe='python27')
