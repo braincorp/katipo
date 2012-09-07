@@ -48,7 +48,6 @@ class Assembly(object):
 	def _parse_assembly_file(self, content):
 		lines = content.split('\n')
 		lines = [l for l in lines if len(l) != 0 and l[0] != '#']
-		print lines
 		self.description = json.loads('\n'.join(lines) + '\n')
 
 
