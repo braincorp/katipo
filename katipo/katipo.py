@@ -219,7 +219,7 @@ class KatipoRoot(object):
 		"""Add PYTHONPATH from each repo to the virtual environment."""
 		af = open(os.path.join(virtual_env_path, 'bin', 'activate'), 'a')
 		af.write('\n# Katipo adding to PYTHONPATH\n')
-		af.write('PYTHONPATH="%s":$PYTHONPATH\n' % python_path)
+		af.write('export PYTHONPATH="%s":$PYTHONPATH\n' % python_path)
 
 	def _add_virtualenv_requirements(self, virtual_env_path, requirements):
 		"""Add requirements to an existing virtual env in path."""
