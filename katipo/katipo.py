@@ -203,7 +203,7 @@ class KatipoRoot(object):
 		except KeyError:
 			prompt = None
 		virtual_env_path = os.path.abspath(os.path.join(
-													self._working_copy_root, '.env'))
+													self._working_copy_root, 'venv'))
 		if not os.path.exists(virtual_env_path):
 			self._create_virtual_env(virtual_env_path, python_exe, prompt)
 
