@@ -160,19 +160,19 @@ class TestKatipoVirtualEnv(TestWithRepoSetup):
 		self.k.setup_virtualenv()
 		# Check that a virtual environment was create
 		assert os.path.exists(os.path.join(self.tempfolder,
-										'workingcopy', '.env'))
+										'workingcopy', 'venv'))
 		# Check that the PYTHONPATH was added correctly
 		# Check that pointer to tempfolder was added to activate.
-		assert open(os.path.join(self.tempfolder, 'workingcopy', '.env',
+		assert open(os.path.join(self.tempfolder, 'workingcopy', 'venv',
 						'bin', 'activate')).read().find(self.tempfolder) != -1
 
 	def test_virtualenv_python(self):
 		self.k.setup_virtualenv(python_exe='python')
 		assert os.path.exists(os.path.join(self.tempfolder,
-										'workingcopy', '.env'))
+										'workingcopy', 'venv'))
 		# Check that packages were installed
 		assert os.path.exists(os.path.join(self.tempfolder,
-						'workingcopy', '.env', 'bin', 'py.test'))
+						'workingcopy', 'venv', 'bin', 'py.test'))
 
 
 class TestKatipoVirtualEnvWithPrompt(TestWithRepoSetup):
@@ -192,7 +192,7 @@ class TestKatipoVirtualEnvWithPrompt(TestWithRepoSetup):
 		self.k.setup_virtualenv()
 		# Check that the PYTHONPATH was added correctly
 		# Check that pointer to tempfolder was added to activate.
-		assert open(os.path.join(self.tempfolder, 'workingcopy', '.env',
+		assert open(os.path.join(self.tempfolder, 'workingcopy', 'venv',
 						'bin', 'activate')).read().find('katipo_test_prompt') != -1
 
 
