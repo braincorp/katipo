@@ -13,17 +13,17 @@ else
 	PYTHONEXEC=python
 fi
 
-if [ -d "venv" ]; then
+if [ -d ".venv" ]; then
    # Virtual Env exists
    true
 else
    echo "**> creatinv virtualenv"
-   virtualenv venv --prompt "(katipo) " --extra-search-dir=$PWD -p $PYTHONEXEC
+   virtualenv .venv --prompt "(katipo) " --extra-search-dir=$PWD -p $PYTHONEXEC
    # During development - add this folder to the PYTHONPATH
-   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$PWD:\$PYTHONPATH\"\n" >> $PWD/venv/bin/activate
+   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$PWD:\$PYTHONPATH\"\n" >> $PWD/.venv/bin/activate
 fi
 
-source venv/bin/activate
+source .venv/bin/activate
 # readline must be come before everything else
 # only need on Mac
 if [[ `uname` == 'Darwin' ]]; then
