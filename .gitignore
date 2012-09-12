@@ -5,4 +5,4 @@
 *.pyc
 .run_env
 .updated
-
+venv
