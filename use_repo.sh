@@ -22,8 +22,8 @@ source .env/bin/activate
 if [[ `uname` == 'Darwin' ]]; then
    easy_install -q readline==6.2.2
 fi
-pip install -r requirements.txt -q
-pip install -r dev-requirements.txt -q
+pip install -r requirements.txt -q --use-mirrors
+pip install -r dev-requirements.txt -q --use-mirrors
 
 # Setup the PATH to point to packages (only needed for debugging - installion will use setuptools).
 PATH=$PWD:$PATH

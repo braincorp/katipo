@@ -148,6 +148,9 @@ class KatipoRoot(object):
 	def run_cmd_per_repo(self, cmd, test_only=False):
 		"""Run shell command (given as a list) for all repos (or only test repos)."""
 		return_code = 0
+		# Deactivate the current virtualenv to return the
+		# calling one.
+		cmd = ['deactivate', '&&'] + cmd
 		logging.info('Running cmd per repo %s' % str(cmd))
 		for repo in self.assembly.repos:
 			if not test_only or repo['test'] is True:
