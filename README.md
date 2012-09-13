@@ -30,7 +30,7 @@ it a tracking branch.
 
     katipo test
 
-Run `test.sh` in every repo which is a test repo.
+Run `test` in every repo which is a test repo. test must be executable.
 
 Python virtual environment setup.
 ---------------

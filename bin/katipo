@@ -1,5 +1,11 @@
 #! /bin/bash
 
+# Save the state of the environment for running external commands
+export KATIPO_PARENT_PATH=$PATH
+export KATIPO_PARENT_PYTHONPATH=$PYTHONPATH
+export KATIPO_PARENT_PYTHONHOME=$PYTHONHOME
+export KATIPO_PARENT_VIRTUAL_ENV=$VIRTUAL_ENV
+
 # Command for invoking katipo.
 # First find the katipo root location.
 
@@ -40,7 +46,7 @@ if test $FILEAGE -gt $MAXAGE; then
 fi
 
 # Check for python27 (so this works on centos)
-if [[ -n $(which python27) ]]; then
+if type python27 > /dev/null; then
 	PYTHONEXEC=python27
 else
 	PYTHONEXEC=python
