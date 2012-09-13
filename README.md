@@ -9,15 +9,17 @@ The general syntax is similar to git:
     
 The initial release supports the following commands.
 
-    katipo clone giturl assemblyfile
+    katipo clone giturl assemblyfile [working location]
 
 This is the first katipo command needed to initialize a working copy of the tree. The `giturl`
 is a pointer to a git repo of assembly files (descriptions of a working tree - see below)
 and assembly file is the specific file inside that repo to get instructions from.
 
-Running this command will create a `.katipo` folder in the current folder and initialize git repos
+Running this command will create a `.katipo` folder in the working location and initialize git repos
 according to the instructions of the assemblyfile. All other commands will search for a `.katipo`
 folder to use as the root.
+
+If not specified, working location defaults to cwd/basename of assembly file (similar to git clone).
 
     katipo perrepo cmd [additional parameters to cmd]
   
