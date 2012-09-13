@@ -46,7 +46,7 @@ if test $FILEAGE -gt $MAXAGE; then
 fi
 
 # Check for python27 (so this works on centos)
-if [[ -n $(which python27) ]]; then
+if type python27 > /dev/null; then
 	PYTHONEXEC=python27
 else
 	PYTHONEXEC=python
@@ -64,7 +64,7 @@ else
 fi
 
 source "$KATIPO_ROOT_DIR/.run_env/bin/activate"
-pip install -r "$KATIPO_ROOT_DIR/requirements.txt" -q
+pip install  -q -r "$KATIPO_ROOT_DIR/requirements.txt" -i http://pypi.braincorporation.net/simple
 
 # Actually run the command
 $KATIPO_ROOT_DIR/.run_env/bin/python $KATIPO_ROOT_DIR/katipo/cmdline.py $*

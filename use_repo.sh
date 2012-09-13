@@ -7,7 +7,7 @@
 # This requires pip and virtualenv to be installed in the system path.
 
 # Check for python27 (so this works on centos)
-if [[ -n $(which python27) ]]; then
+if type python27 > /dev/null ; then
 	PYTHONEXEC=python27
 else
 	PYTHONEXEC=python
@@ -27,10 +27,11 @@ source .venv/bin/activate
 # readline must be come before everything else
 # only need on Mac
 if [[ `uname` == 'Darwin' ]]; then
-   easy_install -q readline==6.2.2
+   easy_install -i http://pypi.braincorporation.net/simple readline==6.2.2   
 fi
-pip install -r requirements.txt -q --use-mirrors
-pip install -r dev-requirements.txt -q --use-mirrors
+
+pip install -q -r requirements.txt -i http://pypi.braincorporation.net/simple
+pip install -q -r dev-requirements.txt -i http://pypi.braincorporation.net/simple
 
 # Setup the PATH to point to packages (only needed for debugging - installation will use setuptools).
 PATH=$PWD:$PATH
