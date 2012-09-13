@@ -7,7 +7,7 @@
 # This requires pip and virtualenv to be installed in the system path.
 
 # Check for python27 (so this works on centos)
-if type python27 > /dev/null ; then
+if type python27 > /dev/null 2>/dev/null ; then
 	PYTHONEXEC=python27
 else
 	PYTHONEXEC=python
