@@ -63,8 +63,22 @@ class Command_clone(Command):
 	def construct_parser(self, parser):
 		parser.add_argument('assemblyrepo', type=str)
 		parser.add_argument('assemblyfile', type=str)
+		parser.add_argument('clonelocation', type=str, nargs='?',
+				help='Location where clone occurs - '
+					'defaults to assembyfile name without extension')
 
 	def exec_cmd(self, args, working_dir):
+		clone_location = args.clonelocation
+		if clone_location is None:
+			# Default to cloning in the basename of assembly file
+			clone_location = os.path.splitext(args.assemblyfile)[0]
+
+		if os.path.isabs(clone_location):
+			working_dir = clone_location
+		else:
+			working_dir = os.path.join(working_dir,
+								clone_location)
+		logging.info('Cloning into working_dir %s' % working_dir)
 		katipo.KatipoRoot(folder=working_dir,
 				giturl=args.assemblyrepo, assemblyfile=args.assemblyfile)
 

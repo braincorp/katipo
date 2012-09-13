@@ -31,8 +31,8 @@ class TestWithClone(TestWithRepoSetup):
 	def clone(self):
 		"""Make working copy (used in other tests)."""
 		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
-				'assemblies'), 'testassembly.katipo'], working_dir=
-				os.path.join(self.tempfolder, 'workingcopy'))
+				'assemblies'), 'testassembly.katipo', 'workingcopy'], working_dir=
+				os.path.join(self.tempfolder))
 
 
 class TestStandaloneCommands(unittest.TestCase):
@@ -57,6 +57,14 @@ class TestCommands(TestWithClone):
 		# Check that the two repos in the assembly were created properly
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'test', 'test'))
 		os.stat(os.path.join(self.tempfolder, 'workingcopy', 'notest', 'notest'))
+
+	def test_clone_with_default(self):
+		cmdline.run_args(['clone', os.path.join(self.tempfolder, 'gitrepos',
+				'assemblies'), 'testassembly.katipo'], working_dir=
+				os.path.join(self.tempfolder))
+		assert os.path.exists(os.path.join(self.tempfolder, 'testassembly'))
+		assert os.path.exists(os.path.join(self.tempfolder, 'testassembly',
+										'.katipo'))
 
 	def test_perrepo(self):
 		self.clone()
