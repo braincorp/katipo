@@ -140,6 +140,9 @@ class KatipoRoot(object):
 		# is that if anything fails during clone we rm katipo_root
 		# (since its probably in a messed up state).
 		# We only want to do that if we created the folder.
+		if not os.path.exists(folder):
+			# Create parent folder if it doesn't already exist.
+			os.mkdir(folder)
 		katipo_root = os.path.join(folder, '.katipo')
 		os.mkdir(os.path.join(katipo_root))
 		self._katipo_root = katipo_root
