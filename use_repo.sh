@@ -6,24 +6,24 @@
 # New python requirements should be added to pip-requires.txt
 # This requires pip and virtualenv to be installed in the system path.
 
-if [ -d ".env" ]; then
+if [ -d ".venv" ]; then
    # Virtual Env exists
    true
 else
    echo "**> creatinv virtualenv"
-   virtualenv .env --prompt "(katipo) " --extra-search-dir=$PWD
+   virtualenv .venv --prompt "(katipo) " --extra-search-dir=$PWD
    # During development - add this folder to the PYTHONPATH
-   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$PWD:\$PYTHONPATH\"\n" >> $PWD/.env/bin/activate
+   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$PWD:\$PYTHONPATH\"\n" >> $PWD/.venv/bin/activate
 fi
 
-source .env/bin/activate
+source .venv/bin/activate
 # readline must be come before everything else
 # only need on Mac
 if [[ `uname` == 'Darwin' ]]; then
-   easy_install -q readline==6.2.2
+   easy_install -i http://pypi.braincorporation.net/simple readline==6.2.2   
 fi
-pip install -r requirements.txt -q
-pip install -r dev-requirements.txt -q
+pip install -q -r requirements.txt -i http://pypi.braincorporation.net/simple
+pip install -q -r dev-requirements.txt -i http://pypi.braincorporation.net/simple
 
 # Setup the PATH to point to packages (only needed for debugging - installion will use setuptools).
 PATH=$PWD:$PATH
