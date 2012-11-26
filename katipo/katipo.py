@@ -259,4 +259,5 @@ class KatipoRoot(object):
 		"""Create an empty virtual env"""
 		options = '--prompt %s' % prompt if prompt is not None else ''
 		options += ' -p %s' % python_exe if python_exe is not None else ''
+		options += ' --distribute'  # Use disttools
 		os.system('virtualenv %s "%s"' % (options, virtual_env_path))
