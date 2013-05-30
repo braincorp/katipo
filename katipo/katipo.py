@@ -137,27 +137,13 @@ class KatipoRoot(object):
 	def run_cmd_per_repo(self, cmd, test_only=False):
 		"""Run shell command (given as a list) for all repos (or only test repos)."""
 		return_code = 0
-		# Restore the parent environment for running external scripts
-		env_vars = ['PATH', 'PYTHONPATH', 'PYTHONHOME', 'VIRTUAL_ENV']
-		env_cmds = []
-		for var in env_vars:
-			try:
-				parent_var = os.environ['KATIPO_PARENT_%s' % var]
-				if parent_var == '':
-					env_cmds += ['unset', var, '&&']
-				else:
-					env_cmds += ['export', '%s=%s' % (var, parent_var), '&&']
-			except KeyError:
-				# This occurs during test because parent var doesn't get set.
-				logging.info('Not parent var %s' % var)
-		cmd = env_cmds + cmd
 		logging.info('Running cmd per repo %s' % str(cmd))
 		for repo in self.assembly.repos:
 			if not test_only or repo['test'] is True:
 				p = subprocess.Popen(' '.join(cmd), cwd=os.path.abspath(
 									os.path.join(self._working_copy_root,
 												repo['path'])),
-									shell=True, executable='/bin/bash')
+									shell=True, executable='/bin/sh')
 				return_code += p.wait()
 		return return_code
 
