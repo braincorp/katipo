@@ -1,71 +1,10 @@
-#! /bin/bash
+#!/usr/bin/env python
+# ===========================================================================
+#
+#  COPYRIGHT 2012-2013 Brain Corporation.
+#  License under MIT license (see LICENSE file)
+# =============================================================================
 
-# Save the state of the environment for running external commands
-export KATIPO_PARENT_PATH=$PATH
-export KATIPO_PARENT_PYTHONPATH=$PYTHONPATH
-export KATIPO_PARENT_PYTHONHOME=$PYTHONHOME
-export KATIPO_PARENT_VIRTUAL_ENV=$VIRTUAL_ENV
-
-# Command for invoking katipo.
-# First find the katipo root location.
-
-# Robust way of locating script folder
-# from http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
-SOURCE="${BASH_SOURCE[0]}"
-DIR="$( dirname "$SOURCE" )"
-while [ -h "$SOURCE" ]
-do 
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-KATIPO_ROOT_DIR="$DIR/.."
-
-# Do a git update to make sure we have the latest version
-# if this version is more than 24 hours old
-UPDATE_FILE="$KATIPO_ROOT_DIR/.updated"
-if [ ! -f "$UPDATE_FILE" ]; then
-	touch "$UPDATE_FILE"
-fi
-
-MAXAGE=$(bc <<< '24*60*60') # seconds in a day
-# Linux and Mac command line incompabilities
-if [[ $(uname) == 'Darwin' ]]; then
-	STAT_CMD="stat -f %c ";
-else
-	STAT_CMD="stat -c %Y ";
-fi
-
-FILEAGE=`expr $(date +%s) - $($STAT_CMD "$UPDATE_FILE")`
-if test $FILEAGE -gt $MAXAGE; then 
-	echo "Updating your version of katipo"
-	(cd "$KATIPO_ROOT_DIR"; git pull --no-ff origin master)
-	touch "$UPDATE_FILE"
-fi
-
-# Check for python27 (so this works on centos)
-if type python27 > /dev/null 2>/dev/null; then
-	PYTHONEXEC=python27
-else
-	PYTHONEXEC=python
-fi
-
-# Now setup the virtual environment.
-if [ -d "$KATIPO_ROOT_DIR/.run_env" ]; then
-   # Virtual Env exists
-   true
-else
-   echo "**> creatinv virtualenv"
-   virtualenv "$KATIPO_ROOT_DIR/.run_env" --prompt "(katipo-runenv) " --extra-search-dir=$KATIPO_ROOT_DIR -p $PYTHONEXEC
-   # During development - add this folder to the PYTHONPATH
-   echo -e "\n# Adding development pythonpath\nexport PYTHONPATH=\"$KATIPO_ROOT_DIR:\$PYTHONPATH\"\n" >> $KATIPO_ROOT_DIR/.run_env/bin/activate
-fi
-
-source "$KATIPO_ROOT_DIR/.run_env/bin/activate"
-pip install  -q -r "$KATIPO_ROOT_DIR/requirements.txt" -i http://pypi.braincorporation.net/simple
-
-# Actually run the command
-$KATIPO_ROOT_DIR/.run_env/bin/python $KATIPO_ROOT_DIR/katipo/cmdline.py $*
+import katipo.cmdline
+katipo.cmdline.main()
 
