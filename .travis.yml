@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+notifications:
+  email: false
+install:
+  - "pip install -r requirements.txt --use-mirrors"
+  - "pip install -r dev-requirements.txt --use-mirrors"
+before_script:
+  # During testing we create some git repos
+  # and git complains if its not configured.
+  - git config --global user.email "test@example.com"
+  - git config --global user.name "Test Example"
+script: py.test -n 4

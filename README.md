@@ -90,9 +90,8 @@ The look like:
 	# Base files
 	"base_files" : {
 		 "use_repo.sh" :
-			{"content" :
-"# Source this script to setup the environment for this package
-"			}
+			{ "content" : "Source this script to setup the environment for this package"
+			}
 		}
     }
 
