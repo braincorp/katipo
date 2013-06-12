@@ -2,7 +2,7 @@ katipo
 ======
 katipo is a tool to facilate working together on multiple git projects that are interrelated. 
 It is somewhat inspired by repo tool but uses merges rather than rebasing and works with
-github pull requests rather than the more heavyweight reviewing tools repo uses.
+github pull requests rather than the more heavyweight reviewing tools repo uses. Additionally, it is easy to create new branches across multiple repos.
 
 The general syntax is similar to git:
     katipo command [options]
@@ -56,14 +56,9 @@ in the base of the working folder.
 
 Installation
 --------------
-The recommended method of installation at the moment (until it matures) is to clone
-the Katipo repo.
+To install or upgrade katipo use pip.
 
-    git clone git@github.com:braincorp/katipo.git
-
-Then access the katipo command by running
-
-    ./katipo/bin/katipo   
+    $ (sudo) pip install -U git+http://github.com/braincorp/katipo.git  
 
 Note that the first time you run this command it may take awhile as it will automatically
 install dependencies for katipo.
@@ -103,6 +98,3 @@ working copy.
 
 `test` is optional and indicates if changes are tested against this repo or if it is just
 a dependency. It defaults to `false`.
-
-
-
